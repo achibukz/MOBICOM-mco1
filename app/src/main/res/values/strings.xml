@@ -1,3 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">mco</string>
+    <string name="app_name">PinJournal</string>
+
+    <!-- Authentication -->
+    <string name="sign_in">Sign In</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="create_account">Create Account</string>
+    <string name="already_have_account">Already have an account? Sign In</string>
+    <string name="need_account">Need an account? Sign Up</string>
+
+    <!-- Navigation -->
+    <string name="nav_home">Home</string>
+    <string name="nav_map">Map</string>
+    <string name="nav_journal">Journal</string>
+    <string name="nav_add">Add</string>
+    <string name="nav_profile">Profile</string>
+
+    <!-- Entry Creation -->
+    <string name="new_entry">New Entry</string>
+    <string name="add_entry">Add Entry</string>
+    <string name="title">Title</string>
+    <string name="notes">Notes</string>
+    <string name="mood">Mood</string>
+    <string name="date_time">Date &amp; Time</string>
+    <string name="location">Location</string>
+    <string name="use_current_location">Use Current Location</string>
+    <string name="add_photos">Add Photos</string>
+    <string name="add_music">Add Music</string>
+    <string name="save_entry">Save Entry</string>
+
+    <!-- Entry Details -->
+    <string name="entry_details">Entry Details</string>
+    <string name="edit_entry">Edit Entry</string>
+    <string name="delete_entry">Delete Entry</string>
+
+    <!-- Journal -->
+    <string name="recent_entries">Recent Entries</string>
+    <string name="timeline_view">Timeline View</string>
+    <string name="list_view">List View</string>
+
+    <!-- Profile -->
+    <string name="edit_profile">Edit Profile</string>
+    <string name="update_profile">Update Profile</string>
+
+    <!-- Errors & Validation -->
+    <string name="error_required_field">This field is required</string>
+    <string name="error_passwords_dont_match">Passwords don\'t match</string>
+    <string name="error_invalid_credentials">Invalid username or password</string>
+    <string name="error_username_exists">Username already exists</string>
+    <string name="error_location_permission">Location permission required</string>
+    <string name="error_storage_permission">Storage permission required</string>
+
+    <!-- Moods -->
+    <string name="mood_happy">Happy</string>
+    <string name="mood_sad">Sad</string>
+    <string name="mood_excited">Excited</string>
+    <string name="mood_calm">Calm</string>
+    <string name="mood_anxious">Anxious</string>
+    <string name="mood_grateful">Grateful</string>
+    <string name="mood_nostalgic">Nostalgic</string>
+    <string name="mood_adventurous">Adventurous</string>
+
+    <!-- Actions -->
+    <string name="open_entry">Open Entry</string>
+    <string name="remove">Remove</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="delete">Delete</string>
+    <string name="edit">Edit</string>
+    <string name="save">Save</string>
+
+    <!-- Content descriptions -->
+    <string name="cd_entry_photo">Entry photo</string>
+    <string name="cd_remove_photo">Remove photo</string>
+    <string name="cd_map_marker">Map marker</string>
+    <string name="cd_audio_file">Audio file</string>
 </resources>
+

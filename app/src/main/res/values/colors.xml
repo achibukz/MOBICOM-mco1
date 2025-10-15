@@ -1,5 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <!-- Primary colors -->
+    <color name="primary">#009688</color>
+    <color name="primary_variant">#00796B</color>
+    <color name="on_primary">#FFFFFF</color>
+
+    <!-- Secondary colors -->
+    <color name="secondary">#4DB6AC</color>
+    <color name="secondary_variant">#00796B</color>
+    <color name="on_secondary">#000000</color>
+
+    <!-- Background colors -->
+    <color name="background">#F0FDFB</color>
+    <color name="on_background">#212121</color>
+
+    <!-- Surface colors -->
+    <color name="surface">#FFFFFF</color>
+    <color name="on_surface">#212121</color>
+
+    <!-- Error colors -->
+    <color name="error">#FF5252</color>
+    <color name="on_error">#FFFFFF</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#212121</color>
+    <color name="text_secondary">#616161</color>
+
+    <!-- Accent colors -->
+    <color name="bright_accent">#64FFDA</color>
+    <color name="accent_error">#FF5252</color>
+
+    <!-- Common colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#616161</color>
+    <color name="light_gray">#E0E0E0</color>
 </resources>

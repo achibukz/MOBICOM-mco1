@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/photo_thumbnail_size"
+    android:layout_height="@dimen/photo_thumbnail_size"
+    android:layout_margin="@dimen/spacing_xs"
+    app:cardCornerRadius="@dimen/spacing_sm"
+    app:cardElevation="2dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ivPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/cd_entry_photo" />
+
+        <ImageButton
+            android:id="@+id/btnRemove"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="top|end"
+            android:layout_margin="@dimen/spacing_xs"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            android:background="@android:drawable/btn_default_small"
+            android:contentDescription="@string/cd_remove_photo" />
+
+    </FrameLayout>
+
+</com.google.android.material.card.MaterialCardView>

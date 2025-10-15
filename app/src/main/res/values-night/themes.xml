@@ -4,4 +4,28 @@
         <!-- Customize your dark theme here. -->
         <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
     </style>
+
+    <!-- Base PinJournal night theme -->
+    <style name="Base.Theme.PinJournal" parent="Theme.Material3.Dark">
+        <item name="colorPrimary">@color/bright_accent</item>
+        <item name="colorPrimaryVariant">@color/secondary</item>
+        <item name="colorSecondary">@color/primary</item>
+        <item name="colorOnPrimary">@color/text_primary</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorSurface">@color/text_primary</item>
+        <item name="colorOnSurface">@color/white</item>
+        <item name="colorError">@color/accent_error</item>
+        <item name="android:colorBackground">@color/text_primary</item>
+        <item name="android:textColorPrimary">@color/white</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="colorAccent">@color/bright_accent</item>
+    </style>
+
+    <style name="Theme.PinJournal" parent="Base.Theme.PinJournal" />
+
+    <!-- No Action Bar variant for sign in/up -->
+    <style name="Theme.PinJournal.NoActionBar" parent="Theme.PinJournal">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
 </resources>
