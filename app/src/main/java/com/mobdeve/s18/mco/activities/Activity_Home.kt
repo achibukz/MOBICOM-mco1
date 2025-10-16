@@ -2,6 +2,7 @@ package com.mobdeve.s18.mco.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.LinearLayout
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -10,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
 import android.widget.TextView
+import com.google.android.material.button.MaterialButton
 import com.mobdeve.s18.mco.R
 import com.mobdeve.s18.mco.adapters.RecentEntriesAdapter
 import com.mobdeve.s18.mco.viewmodels.HomeViewModel
@@ -51,8 +53,14 @@ class Activity_Home : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        findViewById<MaterialCardView>(R.id.cardNewEntry).setOnClickListener {
+        findViewById<MaterialButton>(R.id.mbAddNewJournalEntry).setOnClickListener {
             startActivity(Intent(this, Activity_AddEntry::class.java))
+        }
+        findViewById<LinearLayout>(R.id.llMyMap).setOnClickListener {
+            startActivity(Intent(this, Activity_Map::class.java))
+        }
+        findViewById<LinearLayout>(R.id.llMyJournal).setOnClickListener {
+            startActivity(Intent(this, Activity_Journal::class.java))
         }
     }
 

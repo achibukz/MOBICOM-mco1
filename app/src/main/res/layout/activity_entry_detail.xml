@@ -60,17 +60,19 @@
                 android:text="Entry notes and description..."
                 android:textSize="@dimen/text_size_body"
                 android:textColor="@color/text_primary"
-                android:layout_marginBottom="@dimen/spacing_md" />
+                android:layout_marginBottom="@dimen/spacing_md"
+                android:background="@drawable/more_rounded_background"
+                android:padding="15dp"/>
 
             <TextView
                 android:id="@+id/tvLocationLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_sm"
                 android:text="@string/location"
-                android:textSize="@dimen/text_size_body"
-                android:textStyle="bold"
                 android:textColor="@color/text_primary"
-                android:layout_marginBottom="@dimen/spacing_sm" />
+                android:textSize="@dimen/text_size_body"
+                android:textStyle="bold" />
 
             <org.osmdroid.views.MapView
                 android:id="@+id/mapView"
@@ -82,13 +84,13 @@
                 android:id="@+id/tvPhotosLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_sm"
                 android:text="Photos"
+                android:textColor="@color/text_primary"
                 android:textSize="@dimen/text_size_body"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="@dimen/spacing_sm"
                 android:visibility="gone"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPhotos"
@@ -96,44 +98,45 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="@dimen/spacing_md"
                 android:visibility="gone"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
             <TextView
                 android:id="@+id/tvAudioLabel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_sm"
                 android:text="Audio"
+                android:textColor="@color/text_primary"
                 android:textSize="@dimen/text_size_body"
                 android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginBottom="@dimen/spacing_sm"
                 android:visibility="gone"
-                tools:visibility="visible"/>
+                tools:visibility="visible" />
 
             <LinearLayout
                 android:id="@+id/layoutAudio"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:visibility="gone"
                 android:layout_marginBottom="@dimen/spacing_md"
-                tools:visibility="visible" >
+                android:background="@drawable/more_rounded_background"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <ImageView
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:src="@android:drawable/ic_media_play"
                     android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/cd_audio_file"
                     android:padding="@dimen/spacing_sm"
-                    android:contentDescription="@string/cd_audio_file" />
+                    android:src="@android:drawable/ic_media_play" />
 
                 <TextView
                     android:id="@+id/tvAudioFile"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
                     android:layout_marginStart="@dimen/spacing_sm"
+                    android:layout_weight="1"
                     android:text="Audio file"
                     android:textColor="@color/text_primary" />
 
