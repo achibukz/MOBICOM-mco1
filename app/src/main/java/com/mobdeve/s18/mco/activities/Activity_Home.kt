@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.card.MaterialCardView
 import android.widget.TextView
+import com.google.android.material.button.MaterialButton
 import com.mobdeve.s18.mco.R
 import com.mobdeve.s18.mco.adapters.RecentEntriesAdapter
 import com.mobdeve.s18.mco.viewmodels.HomeViewModel
@@ -51,7 +52,7 @@ class Activity_Home : AppCompatActivity() {
     }
 
     private fun setupUI() {
-        findViewById<MaterialCardView>(R.id.cardNewEntry).setOnClickListener {
+        findViewById<MaterialButton>(R.id.mbAddNewJournal).setOnClickListener {
             startActivity(Intent(this, Activity_AddEntry::class.java))
         }
     }
