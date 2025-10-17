@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/entry_card_height"
     android:layout_margin="@dimen/spacing_xs"
@@ -13,54 +12,47 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/spacing_md"
-        android:background="@drawable/more_rounded_background">
+        android:padding="@dimen/spacing_md">
 
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/image_card"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            app:cardCornerRadius="15dp"
+        <ImageView
+            android:id="@+id/ivThumbnail"
+            android:layout_width="@dimen/photo_thumbnail_size"
+            android:layout_height="@dimen/photo_thumbnail_size"
+            android:scaleType="centerCrop"
+            android:background="@color/secondary"
+            android:contentDescription="@string/cd_entry_photo"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/ivThumbnail"
-                android:layout_width="@dimen/photo_thumbnail_size"
-                android:layout_height="@dimen/photo_thumbnail_size"
-                android:background="@color/secondary"
-                android:contentDescription="@string/cd_entry_photo"
-                android:scaleType="centerCrop"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </com.google.android.material.card.MaterialCardView>
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="2"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_marginEnd="@dimen/spacing_sm"
             android:text="Entry Title"
-            android:textColor="@color/text_primary"
             android:textSize="@dimen/text_size_body"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@+id/image_card"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:textColor="@color/text_primary"
+            android:maxLines="2"
+            android:ellipsize="end"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toEndOf="@id/ivThumbnail"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
             android:id="@+id/tvDate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/spacing_md"
+            android:layout_marginTop="@dimen/spacing_xs"
             android:text="Oct 15, 2025"
-            android:textColor="@color/text_secondary"
             android:textSize="@dimen/text_size_small"
-            app:layout_constraintEnd_toStartOf="@+id/image_card"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTitle" />
+            android:textColor="@color/text_secondary"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toEndOf="@id/ivThumbnail"
+            app:layout_constraintEnd_toEndOf="parent" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chipLocation"
@@ -68,15 +60,13 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/spacing_md"
             android:layout_marginTop="@dimen/spacing_xs"
-            android:layout_marginEnd="212dp"
             android:text="Location"
             android:textSize="@dimen/text_size_small"
-            app:chipBackgroundColor="@color/surface"
+            app:chipBackgroundColor="@color/bright_accent"
             app:chipStrokeWidth="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/image_card"
+            app:layout_constraintTop_toBottomOf="@id/tvDate"
             app:layout_constraintStart_toEndOf="@id/ivThumbnail"
-            app:layout_constraintTop_toBottomOf="@id/tvDate" />
+            app:layout_constraintBottom_toBottomOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
