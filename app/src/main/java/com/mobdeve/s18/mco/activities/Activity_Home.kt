@@ -15,6 +15,8 @@ import com.mobdeve.s18.mco.R
 import com.mobdeve.s18.mco.adapters.RecentEntriesAdapter
 import com.mobdeve.s18.mco.viewmodels.HomeViewModel
 import kotlinx.coroutines.launch
+import android.widget.LinearLayout
+
 
 class Activity_Home : AppCompatActivity() {
 
@@ -54,6 +56,12 @@ class Activity_Home : AppCompatActivity() {
     private fun setupUI() {
         findViewById<MaterialButton>(R.id.mbAddNewJournal).setOnClickListener {
             startActivity(Intent(this, Activity_AddEntry::class.java))
+        }
+        findViewById<LinearLayout>(R.id.llMyMap).setOnClickListener {
+            startActivity(Intent(this, Activity_Map::class.java))
+        }
+        findViewById<LinearLayout>(R.id.llMyJournal).setOnClickListener {
+            startActivity(Intent(this, Activity_Journal::class.java))
         }
     }
 
