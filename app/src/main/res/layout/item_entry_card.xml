@@ -5,35 +5,37 @@
     android:layout_width="match_parent"
     android:layout_height="@dimen/entry_card_height"
     android:layout_margin="@dimen/spacing_xs"
-    app:cardCornerRadius="15dp"
-    app:cardElevation="4dp"
     android:clickable="true"
-    android:focusable="true">
+    android:focusable="true"
+    app:cardCornerRadius="15dp"
+    app:cardElevation="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="@dimen/spacing_md"
-        android:background="@drawable/more_rounded_background">
+        android:background="@drawable/more_rounded_background"
+        android:padding="@dimen/spacing_md">
 
         <TextView
             android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:ellipsize="end"
             android:maxLines="2"
             android:text="Entry Title"
             android:textColor="@color/text_primary"
             android:textSize="@dimen/text_size_body"
             android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="@+id/tvDate"
+            app:layout_constraintEnd_toStartOf="@+id/image_card"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/tvDate"
-            android:layout_width="271dp"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:text="Oct 15, 2025"
             android:textColor="@color/text_secondary"
             android:textSize="@dimen/text_size_small"
@@ -45,6 +47,7 @@
             android:id="@+id/chipLocation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="10dp"
             android:text="Location"
             android:textSize="@dimen/text_size_small"
             app:chipBackgroundColor="@color/surface"

@@ -57,11 +57,12 @@
                 android:id="@+id/tvNotes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Entry notes and description..."
-                android:textSize="@dimen/text_size_body"
-                android:textColor="@color/text_primary"
                 android:layout_marginBottom="@dimen/spacing_md"
-                android:background="@drawable/more_rounded_background"/>
+                android:background="@drawable/more_rounded_background"
+                android:padding="10dp"
+                android:text="Entry notes and description..."
+                android:textColor="@color/text_primary"
+                android:textSize="@dimen/text_size_body" />
 
             <TextView
                 android:id="@+id/tvLocationLabel"
