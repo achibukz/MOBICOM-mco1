@@ -60,7 +60,8 @@
                 android:text="Entry notes and description..."
                 android:textSize="@dimen/text_size_body"
                 android:textColor="@color/text_primary"
-                android:layout_marginBottom="@dimen/spacing_md" />
+                android:layout_marginBottom="@dimen/spacing_md"
+                android:background="@drawable/more_rounded_background"/>
 
             <TextView
                 android:id="@+id/tvLocationLabel"
