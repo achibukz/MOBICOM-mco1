@@ -68,4 +68,7 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    // Material UI
+    implementation("com.google.android.material:material:1.12.0")
 }
