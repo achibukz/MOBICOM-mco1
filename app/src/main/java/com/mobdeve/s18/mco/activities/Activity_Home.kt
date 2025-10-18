@@ -2,6 +2,7 @@ package com.mobdeve.s18.mco.activities
 
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -62,6 +63,9 @@ class Activity_Home : AppCompatActivity() {
         }
         findViewById<LinearLayout>(R.id.llMyJournal).setOnClickListener {
             startActivity(Intent(this, Activity_Journal::class.java))
+        }
+        findViewById<Button>(R.id.btnEditProfile).setOnClickListener {
+            startActivity(Intent(this, Activity_EditProfile::class.java))
         }
     }
 

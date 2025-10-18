@@ -94,6 +94,9 @@
         <activity
             android:name=".MainActivity"
             android:exported="false" />
+
+        <!-- Activity Edit Profile -->
+        <activity android:name=".activities.Activity_EditProfile" />
     </application>
 
 </manifest>

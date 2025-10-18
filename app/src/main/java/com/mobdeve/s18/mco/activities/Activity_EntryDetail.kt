@@ -118,6 +118,13 @@ class Activity_EntryDetail : AppCompatActivity() {
                         position = location
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                         title = entry.title
+
+                        // --- ADD THESE LINES ---
+                        // Make sure to import androidx.core.content.ContextCompat
+                        val drawable = androidx.core.content.ContextCompat.getDrawable(this@Activity_EntryDetail, R.drawable.ic_pin)?.mutate()
+                        drawable?.setTint(androidx.core.content.ContextCompat.getColor(this@Activity_EntryDetail, R.color.primary))
+                        icon = drawable
+                        // --- END OF ADDITION ---
                     }
                     mapView.overlays.add(marker)
                     mapView.invalidate()

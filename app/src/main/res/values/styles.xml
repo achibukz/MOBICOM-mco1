@@ -5,6 +5,8 @@
     <style name="CircularImageView">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">50%</item>
+        <item name="strokeColor">@color/black</item> <!-- change color as needed -->
+        <item name="strokeWidth">5dp</item> <!-- adjust thickness -->
     </style>
 
 </resources>

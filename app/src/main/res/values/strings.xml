@@ -3,7 +3,7 @@
     <string name="app_name">PinJournal</string>
 
     <!-- Authentication -->
-    <string name="sign_in">Sign Inn</string>
+    <string name="sign_in">Sign In</string>
     <string name="sign_up">Sign Up</string>
     <string name="username">Username</string>
     <string name="password">Password</string>

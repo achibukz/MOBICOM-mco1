@@ -1,6 +1,10 @@
 package com.mobdeve.s18.mco.activities
 
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.drawable.BitmapDrawable
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -215,11 +219,14 @@ class Activity_Map : AppCompatActivity() {
             title = entry.title
             snippet = DateUtils.formatDateTime(entry.timestamp)
 
-            // Set a proper pin icon instead of the default crosshair
-            icon = ContextCompat.getDrawable(this@Activity_Map, android.R.drawable.ic_menu_mylocation)?.apply {
-                // Tint the icon to match the app's primary color
-                setTint(ContextCompat.getColor(this@Activity_Map, R.color.primary))
-            }
+            // Get drawable, apply tint, and set it directly
+            val drawable = ContextCompat.getDrawable(this@Activity_Map, R.drawable.ic_pin)?.mutate()
+            drawable?.setTint(ContextCompat.getColor(this@Activity_Map, R.color.primary))
+
+            // --- THIS IS THE FIX ---
+            // Set the drawable directly. No bitmap conversion is needed.
+            icon = drawable
+            // --- END OF FIX ---
 
             setOnMarkerClickListener { _, _ ->
                 showEntryPreview(entry)
@@ -227,6 +234,7 @@ class Activity_Map : AppCompatActivity() {
             }
         }
     }
+
 
     private fun calculateBounds(entries: List<JournalEntry>): BoundingBox {
         val latitudes = entries.map { it.latitude }

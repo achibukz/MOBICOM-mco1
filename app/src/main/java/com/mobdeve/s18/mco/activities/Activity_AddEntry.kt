@@ -153,8 +153,12 @@ class Activity_AddEntry : AppCompatActivity() {
             isDraggable = true
 
             // Set marker icon to make it more visible
-            icon = ContextCompat.getDrawable(this@Activity_AddEntry, android.R.drawable.ic_menu_mylocation)
+            val drawable = ContextCompat.getDrawable(this@Activity_AddEntry, R.drawable.ic_pin)?.mutate()
+            drawable?.setTint(ContextCompat.getColor(this@Activity_AddEntry, R.color.primary))
 
+            // --- THIS IS THE FIX ---
+            // Set the drawable directly. No bitmap conversion is needed.
+            icon = drawable
             // Add drag listener to update location when marker is moved
             setOnMarkerDragListener(object : Marker.OnMarkerDragListener {
                 override fun onMarkerDrag(marker: Marker?) {
