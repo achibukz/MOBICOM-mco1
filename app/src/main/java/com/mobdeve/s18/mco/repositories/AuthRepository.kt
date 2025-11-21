@@ -1,20 +1,32 @@
 package com.mobdeve.s18.mco.repositories
 
 import com.mobdeve.s18.mco.models.User
+import com.mobdeve.s18.mco.preferences.UserPreferences
 import java.util.UUID
 
-class AuthRepository {
-    private val users = mutableMapOf<String, User>()
+class AuthRepository(private val userPreferences: UserPreferences) {
+    private var users = mutableMapOf<String, User>()
     private var currentUser: User? = null
 
     init {
-        // Add a default test account for easier testing
-        val testUser = User(
-            id = UUID.randomUUID().toString(),
-            username = "test",
-            passwordPlain = "123456"
-        )
-        users["test"] = testUser
+        // Load existing users from SharedPreferences
+        users = userPreferences.loadUsers()
+
+        // Add default test account if no users exist
+        if (users.isEmpty()) {
+            val testUser = User(
+                id = UUID.randomUUID().toString(),
+                username = "test",
+                passwordPlain = "123456"
+            )
+            users["test"] = testUser
+            saveUsers() // Save the test user
+        }
+    }
+
+    // Persist the users map to SharedPreferences via UserPreferences
+    private fun saveUsers() {
+        userPreferences.saveUsers(users)
     }
 
     fun signUp(username: String, password: String): Result<User> {
@@ -29,6 +41,7 @@ class AuthRepository {
         )
 
         users[username] = user
+        saveUsers() // persist new user
         return Result.success(user)
     }
 
@@ -50,6 +63,7 @@ class AuthRepository {
             users.remove(oldUsername)
             users[updatedUser.username] = updatedUser
             currentUser = updatedUser
+            saveUsers() // persist changes
             return Result.success(updatedUser)
         }
         return Result.failure(Exception("User not found"))
