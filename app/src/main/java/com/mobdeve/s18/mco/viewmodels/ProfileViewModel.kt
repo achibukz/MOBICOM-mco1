@@ -1,5 +1,6 @@
 package com.mobdeve.s18.mco.viewmodels
 
+import android.util.Patterns
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mobdeve.s18.mco.PinJournalApp
@@ -32,35 +33,80 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    fun updateProfile(username: String, password: String) {
+    // Unified update method: can update username/password and/or profile fields
+    fun updateProfile(
+        username: String? = null,
+        password: String? = null,
+        firstName: String? = null,
+        lastName: String? = null,
+        email: String? = null,
+        mobile: String? = null
+    ) {
         val currentUser = _uiState.value.user
         if (currentUser == null) {
             _uiState.value = _uiState.value.copy(errorMessage = "No user found")
             return
         }
 
-        if (username.isBlank() || password.isBlank()) {
-            _uiState.value = _uiState.value.copy(errorMessage = "Please fill in all fields")
-            return
+        // Check auth fields independently so user can change username OR password (not necessarily both)
+        val updatingAuth = username != null || password != null
+        if (updatingAuth) {
+            if (username != null) {
+                if (username.isBlank()) {
+                    _uiState.value = _uiState.value.copy(errorMessage = "Please provide a valid username")
+                    return
+                }
+            }
+
+            if (password != null) {
+                if (password.isBlank()) {
+                    _uiState.value = _uiState.value.copy(errorMessage = "Please provide a valid password")
+                    return
+                }
+                if (password.length < 6) {
+                    _uiState.value = _uiState.value.copy(errorMessage = "Password must be at least 6 characters")
+                    return
+                }
+            }
         }
 
-        if (password.length < 6) {
-            _uiState.value = _uiState.value.copy(errorMessage = "Password must be at least 6 characters")
-            return
+        // If updating profile details, require all profile fields provided (matches previous behaviour)
+        val updatingProfile = firstName != null || lastName != null || email != null || mobile != null
+        if (updatingProfile) {
+            if (firstName.isNullOrBlank() || lastName.isNullOrBlank() || email.isNullOrBlank() || mobile.isNullOrBlank()) {
+                _uiState.value = _uiState.value.copy(errorMessage = "Please fill in all fields")
+                return
+            }
+            if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+                _uiState.value = _uiState.value.copy(errorMessage = "Please enter a valid email")
+                return
+            }
         }
 
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
-        val updatedUser = currentUser.copy(username = username, passwordPlain = password)
+        // Build updated user by copying existing values and applying provided ones
+        val updatedUser = currentUser.copy(
+            username = username ?: currentUser.username,
+            passwordPlain = password ?: currentUser.passwordPlain,
+            firstName = firstName ?: currentUser.firstName,
+            lastName = lastName ?: currentUser.lastName,
+            email = email ?: currentUser.email,
+            mobile = mobile ?: currentUser.mobile
+        )
+
         val result = authRepository.updateUser(updatedUser)
 
         if (result.isSuccess) {
             viewModelScope.launch {
-                sessionManager.saveSession(username) // Update session with new username
+                // If username changed, update session
+                if (updatingAuth && username != null) {
+                    sessionManager.saveSession(username)
+                }
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     user = updatedUser,
-                    username = username,
+                    username = updatedUser.username,
                     isUpdateSuccess = true
                 )
             }

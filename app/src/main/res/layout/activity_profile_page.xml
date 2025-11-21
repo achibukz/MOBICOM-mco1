@@ -51,13 +51,57 @@
         android:padding="2dp"
         />
 
+    <!-- Username -->
+    <TextView
+        android:id="@+id/tvProfileUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        android:layout_marginTop="24sp"
+        android:paddingStart="15sp"/>
+
+    <EditText
+        android:id="@+id/etProfileUsername"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_text"
+        android:ems="10"
+        android:inputType="text"
+        android:layout_marginTop="5sp"
+        android:paddingStart="20sp"
+        android:paddingTop="10sp"
+        android:paddingEnd="20sp"
+        android:paddingBottom="10sp"/>
+
+    <!-- Password (leave blank to keep current password) -->
+    <TextView
+        android:id="@+id/tvProfilePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="New Password (leave blank to keep current)"
+        android:layout_marginTop="10sp"
+        android:paddingStart="15sp"/>
+
+    <EditText
+        android:id="@+id/etProfilePassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_text"
+        android:ems="10"
+        android:inputType="textPassword"
+        android:layout_marginTop="5sp"
+        android:paddingStart="20sp"
+        android:paddingTop="10sp"
+        android:paddingEnd="20sp"
+        android:paddingBottom="10sp"/>
+
 
     <TextView
         android:id="@+id/tvProfileFirstName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="First Name"
-        android:layout_marginTop="40sp"
+        android:layout_marginTop="20sp"
         android:paddingStart="15sp"/>
 
     <EditText
