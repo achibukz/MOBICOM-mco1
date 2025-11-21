@@ -3,7 +3,7 @@
     android:shape="rectangle">
 
     <!-- The background color inside the border -->
-    <solid android:color="#FFFFFF" />
+    <solid android:color="@color/surface" />
 
     <!-- The border (outline) -->
     <stroke

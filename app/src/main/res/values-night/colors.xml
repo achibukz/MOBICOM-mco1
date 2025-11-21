@@ -1,0 +1,39 @@
+<resources>
+
+    <!-- Primary colors -->
+    <color name="primary">#80CBC4</color> <!-- lighter teal for dark mode -->
+    <color name="primary_variant">#26A69A</color>
+    <color name="on_primary">#000000</color>
+
+    <!-- Secondary colors -->
+    <color name="secondary">#4DB6AC</color>
+    <color name="secondary_variant">#00897B</color>
+    <color name="on_secondary">#000000</color>
+
+    <!-- Background colors -->
+    <color name="background">#121212</color>  <!-- true dark -->
+    <color name="on_background">#E0E0E0</color>
+
+    <!-- Surface colors -->
+    <color name="surface">#1E1E1E</color> <!-- subtle elevation -->
+    <color name="on_surface">#E0E0E0</color>
+
+    <!-- Error colors -->
+    <color name="error">#CF6679</color> <!-- Google's night error -->
+    <color name="on_error">#000000</color>
+
+    <!-- Text colors -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#B3FFFFFF</color>
+
+    <!-- Accent colors -->
+    <color name="bright_accent">#64FFDA</color> <!-- still looks great at night -->
+    <color name="accent_error">#CF6679</color>
+
+    <!-- Common colors -->
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="gray">#BDBDBD</color>
+    <color name="light_gray">#757575</color>
+
+</resources>

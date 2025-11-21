@@ -4,6 +4,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import androidx.appcompat.widget.SwitchCompat
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -11,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.mobdeve.s18.mco.R
 import com.google.android.material.imageview.ShapeableImageView
+import com.mobdeve.s18.mco.preferences.ThemePreferences
 import com.mobdeve.s18.mco.utils.SafUtils
 import com.mobdeve.s18.mco.viewmodels.ProfileViewModel
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +32,7 @@ class Activity_EditProfile : AppCompatActivity() {
     private lateinit var etMobile: EditText
     private lateinit var ivProfileImage: ShapeableImageView
     private lateinit var tvTitle: TextView
+    private lateinit var switchTheme: SwitchCompat
     private val viewModel: ProfileViewModel by viewModels()
     private var selectedImageUri: Uri? = null
 
@@ -79,6 +82,16 @@ class Activity_EditProfile : AppCompatActivity() {
         etMobile = findViewById(R.id.etProfileMobile)
         ivProfileImage = findViewById(R.id.ivProfileImage)
         tvTitle = findViewById(R.id.tvProfileTitle)
+        switchTheme = findViewById(R.id.switchTheme)
+
+        // Initialize switch state from saved preferences
+        val themePref = ThemePreferences(this)
+        switchTheme.isChecked = themePref.isDarkMode()
+        switchTheme.setOnCheckedChangeListener { _, isChecked ->
+            themePref.setDarkMode(isChecked)
+            // Recreate activity to apply theme immediately
+            recreate()
+        }
     }
 
     private fun setupListeners() {
