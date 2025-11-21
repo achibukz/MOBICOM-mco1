@@ -19,6 +19,10 @@
         <item name="android:textColorPrimary">@color/white</item>
         <item name="android:textColorSecondary">@color/text_secondary</item>
         <item name="colorAccent">@color/bright_accent</item>
+
+        <!-- Ensure no action bar in night mode (match the light theme) -->
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="Theme.PinJournal" parent="Base.Theme.PinJournal" />
