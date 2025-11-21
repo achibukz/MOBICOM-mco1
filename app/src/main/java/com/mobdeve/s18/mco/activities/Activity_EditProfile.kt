@@ -1,5 +1,6 @@
 package com.mobdeve.s18.mco.activities
 
+import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -7,8 +8,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.mobdeve.s18.mco.R
 import com.google.android.material.imageview.ShapeableImageView
+import com.mobdeve.s18.mco.utils.SafUtils
 import com.mobdeve.s18.mco.viewmodels.ProfileViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -28,6 +31,7 @@ class Activity_EditProfile : AppCompatActivity() {
     private lateinit var ivProfileImage: ShapeableImageView
     private lateinit var tvTitle: TextView
     private val viewModel: ProfileViewModel by viewModels()
+    private var selectedImageUri: Uri? = null
 
     // Activity-scoped coroutine scope (canceled in onDestroy)
     private val activityJob = Job()
@@ -42,20 +46,25 @@ class Activity_EditProfile : AppCompatActivity() {
         setupListeners()
         observeViewModel()
 
-        // Back button closes the activity
-        btnBack.setOnClickListener {
-            finish()
-        }
-
-        // Optional: Click profile image to change (later)
-        ivProfileImage.setOnClickListener {
-            Toast.makeText(this, "Change profile picture feature coming soon", Toast.LENGTH_SHORT).show()
-        }
+        // Back button and image click handled in setupListeners()
     }
 
     override fun onDestroy() {
         super.onDestroy()
         activityJob.cancel()
+    }
+
+    // Image picker launcher
+    private val imagePickerLauncher = SafUtils.createImagePickerLauncher(this) { uris ->
+        if (uris.isNotEmpty()) {
+            selectedImageUri = uris[0]
+            // Display the selected image
+            Glide.with(this)
+                .load(selectedImageUri)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile_placeholder)
+                .into(ivProfileImage)
+        }
     }
 
     private fun initializeViews() {
@@ -81,9 +90,12 @@ class Activity_EditProfile : AppCompatActivity() {
             saveProfile()
         }
 
+        // Launch system image picker when profile image is clicked
         ivProfileImage.setOnClickListener {
-            Toast.makeText(this, "Change profile picture feature coming soon", Toast.LENGTH_SHORT).show()
+            imagePickerLauncher.launch(SafUtils.createImagePickerIntent())
         }
+
+        // image click handled by setupListeners()
     }
 
     private fun saveProfile() {
@@ -122,7 +134,8 @@ class Activity_EditProfile : AppCompatActivity() {
             firstName = firstName,
             lastName = lastName,
             email = email,
-            mobile = mobile
+            mobile = mobile,
+            profileImageUri = selectedImageUri?.toString()
         )
     }
 
@@ -137,6 +150,21 @@ class Activity_EditProfile : AppCompatActivity() {
                     etLastName.setText(state.user.lastName)
                     etEmail.setText(state.user.email)
                     etMobile.setText(state.user.mobile)
+
+                    // Load existing profile image if available
+                    state.user.profileImageUri?.let { uriString ->
+                        try {
+                            val uri = Uri.parse(uriString)
+                            Glide.with(this@Activity_EditProfile)
+                                .load(uri)
+                                .circleCrop()
+                                .placeholder(R.drawable.ic_profile_placeholder)
+                                .into(ivProfileImage)
+                            selectedImageUri = uri
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                    }
                 }
 
                 // Handle loading state

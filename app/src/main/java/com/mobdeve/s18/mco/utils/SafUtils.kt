@@ -29,13 +29,14 @@ class SafUtils {
                             for (i in 0 until clipData.itemCount) {
                                 val uri = clipData.getItemAt(i).uri
                                 uris.add(uri)
-                                takePersistablePermission(activity, uri)
+                                // Use the flags returned by the intent to request persistable permission
+                                takePersistablePermission(activity, uri, data.flags)
                             }
                         } ?: run {
                             // Single selection
                             data.data?.let { uri ->
                                 uris.add(uri)
-                                takePersistablePermission(activity, uri)
+                                takePersistablePermission(activity, uri, data.flags)
                             }
                         }
                     }
@@ -54,7 +55,9 @@ class SafUtils {
             ) { result ->
                 if (result.resultCode == AppCompatActivity.RESULT_OK) {
                     result.data?.data?.let { uri ->
-                        takePersistablePermission(activity, uri)
+                        // Try to take persistable permission using flags if available
+                        val flags = result.data?.flags ?: Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        takePersistablePermission(activity, uri, flags)
                         onResult(uri)
                     }
                 }
@@ -84,14 +87,14 @@ class SafUtils {
             }
         }
 
-        private fun takePersistablePermission(context: Context, uri: Uri) {
+        private fun takePersistablePermission(context: Context, uri: Uri, flags: Int) {
             try {
-                context.contentResolver.takePersistableUriPermission(
-                    uri,
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION
-                )
+                val takeFlags = flags and (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                context.contentResolver.takePersistableUriPermission(uri, takeFlags)
             } catch (e: SecurityException) {
                 // Permission might not be available for this URI
+                e.printStackTrace()
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }

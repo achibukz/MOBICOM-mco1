@@ -40,7 +40,8 @@ class ProfileViewModel : ViewModel() {
         firstName: String? = null,
         lastName: String? = null,
         email: String? = null,
-        mobile: String? = null
+        mobile: String? = null,
+        profileImageUri: String? = null
     ) {
         val currentUser = _uiState.value.user
         if (currentUser == null) {
@@ -92,7 +93,8 @@ class ProfileViewModel : ViewModel() {
             firstName = firstName ?: currentUser.firstName,
             lastName = lastName ?: currentUser.lastName,
             email = email ?: currentUser.email,
-            mobile = mobile ?: currentUser.mobile
+            mobile = mobile ?: currentUser.mobile,
+            profileImageUri = profileImageUri ?: currentUser.profileImageUri
         )
 
         val result = authRepository.updateUser(updatedUser)
