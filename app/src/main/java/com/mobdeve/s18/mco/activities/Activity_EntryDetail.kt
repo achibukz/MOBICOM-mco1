@@ -1,6 +1,5 @@
 package com.mobdeve.s18.mco.activities
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -8,12 +7,14 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat // Added for correct Drawable handling
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButton
 import com.mobdeve.s18.mco.R
 import com.mobdeve.s18.mco.adapters.PhotoGridAdapter
+import com.mobdeve.s18.mco.utils.AudioPlayerUtils
 import com.mobdeve.s18.mco.utils.DateUtils
 import com.mobdeve.s18.mco.viewmodels.EntryDetailViewModel
 import kotlinx.coroutines.launch
@@ -77,11 +78,10 @@ class Activity_EntryDetail : AppCompatActivity() {
 
     private fun setupUI() {
         findViewById<MaterialButton>(R.id.btnEdit).setOnClickListener {
-            // For this prototype, we'll just show a toast
-            // In a full implementation, you'd navigate to AddEntry with edit mode
             Toast.makeText(this, "Edit functionality would be implemented here", Toast.LENGTH_SHORT).show()
         }
 
+        // The Listener simply triggers the ViewModel command
         findViewById<MaterialButton>(R.id.btnDelete).setOnClickListener {
             showDeleteConfirmation()
         }
@@ -92,6 +92,8 @@ class Activity_EntryDetail : AppCompatActivity() {
             .setTitle("Delete Entry")
             .setMessage("Are you sure you want to delete this entry? This action cannot be undone.")
             .setPositiveButton("Delete") { _, _ ->
+                // FIX: This is now a fire-and-forget call.
+                // We do not check a return value here. We wait for the observer.
                 viewModel.deleteEntry()
             }
             .setNegativeButton("Cancel", null)
@@ -101,8 +103,23 @@ class Activity_EntryDetail : AppCompatActivity() {
     private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.uiState.collect { state ->
+
+                // 1. Check for Delete Success FIRST
+                // If deleted, close screen immediately to prevent crashes or UI flickers
+                if (state.isDeleted) {
+                    Toast.makeText(this@Activity_EntryDetail, "Entry deleted", Toast.LENGTH_SHORT).show()
+                    finish()
+                    return@collect // Stop processing this state
+                }
+
+                // 2. Check for Errors
+                state.errorMessage?.let { error ->
+                    Toast.makeText(this@Activity_EntryDetail, error, Toast.LENGTH_SHORT).show()
+                    viewModel.clearError()
+                }
+
+                // 3. Update UI with Entry Data
                 state.entry?.let { entry ->
-                    // Populate UI with entry data
                     findViewById<TextView>(R.id.tvTitle).text = entry.title
                     findViewById<TextView>(R.id.tvDateTime).text = DateUtils.formatDateTime(entry.timestamp)
                     findViewById<TextView>(R.id.tvNotes).text = entry.notes.ifEmpty { "No notes" }
@@ -110,55 +127,44 @@ class Activity_EntryDetail : AppCompatActivity() {
                     // Setup map
                     val mapView = findViewById<MapView>(R.id.mapView)
                     val location = GeoPoint(entry.latitude, entry.longitude)
-                    mapView.controller.setZoom(15.0)
-                    mapView.controller.setCenter(location)
+                    // Only center map if it's the first load or significant change to avoid jarring jumps
+                    if (mapView.zoomLevelDouble < 15.0) {
+                        mapView.controller.setZoom(15.0)
+                        mapView.controller.setCenter(location)
+                    }
 
-                    // Add marker
+                    // Map Marker
                     val marker = Marker(mapView).apply {
                         position = location
                         setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                         title = entry.title
 
-                        // --- ADD THESE LINES ---
-                        // Make sure to import androidx.core.content.ContextCompat
-                        val drawable = androidx.core.content.ContextCompat.getDrawable(this@Activity_EntryDetail, R.drawable.ic_pin)?.mutate()
-                        drawable?.setTint(androidx.core.content.ContextCompat.getColor(this@Activity_EntryDetail, R.color.primary))
+                        val drawable = ContextCompat.getDrawable(this@Activity_EntryDetail, R.drawable.ic_pin)?.mutate()
+                        drawable?.setTint(ContextCompat.getColor(this@Activity_EntryDetail, R.color.primary))
                         icon = drawable
-                        // --- END OF ADDITION ---
                     }
+                    mapView.overlays.clear() // Clear old markers to avoid duplicates
                     mapView.overlays.add(marker)
                     mapView.invalidate()
 
-                    // Show photos if available
+                    // Photos
                     if (entry.photos.isNotEmpty()) {
                         findViewById<TextView>(R.id.tvPhotosLabel).visibility = View.VISIBLE
                         findViewById<RecyclerView>(R.id.rvPhotos).visibility = View.VISIBLE
                         photoAdapter.submitList(entry.photos)
                     }
 
-                    // Show audio if available and automatically play it
+                    // Audio
                     if (entry.audioUri != null) {
                         findViewById<TextView>(R.id.tvAudioLabel).visibility = View.VISIBLE
                         findViewById<View>(R.id.layoutAudio).visibility = View.VISIBLE
                         findViewById<TextView>(R.id.tvAudioFile).text = "Audio File (Auto-playing...)"
 
-                        // Store audioUri in a local variable to avoid smart cast issues
-                        val audioUri = entry.audioUri
-                        if (audioUri != null) {
-                            // Automatically play the audio when entry is opened
-                            com.mobdeve.s18.mco.utils.AudioPlayerUtils.playAudio(this@Activity_EntryDetail, audioUri)
+                        // Only play if not already playing to prevent looping on state updates
+                        if (!AudioPlayerUtils.isPlaying()) {
+                            AudioPlayerUtils.playAudio(this@Activity_EntryDetail, entry.audioUri!!)
                         }
                     }
-                }
-
-                state.errorMessage?.let { error ->
-                    Toast.makeText(this@Activity_EntryDetail, error, Toast.LENGTH_SHORT).show()
-                    viewModel.clearError()
-                }
-
-                if (state.isDeleted) {
-                    Toast.makeText(this@Activity_EntryDetail, "Entry deleted", Toast.LENGTH_SHORT).show()
-                    finish()
                 }
             }
         }
@@ -166,7 +172,6 @@ class Activity_EntryDetail : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        // Stop audio when leaving the activity
-        com.mobdeve.s18.mco.utils.AudioPlayerUtils.stopAudio()
+        AudioPlayerUtils.stopAudio()
     }
 }

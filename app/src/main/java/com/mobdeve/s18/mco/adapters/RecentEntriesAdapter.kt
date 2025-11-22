@@ -40,7 +40,7 @@ class RecentEntriesAdapter(
             // Load first photo as thumbnail
             if (entry.photos.isNotEmpty()) {
                 Glide.with(binding.ivThumbnail.context)
-                    .load(entry.photos.first().uri)
+                    .load(entry.photos.first().uriString) // FIX: Changed .uri to .uriString
                     .placeholder(R.color.secondary)
                     .error(R.color.secondary)
                     .centerCrop()

@@ -1,17 +1,20 @@
 package com.mobdeve.s18.mco.models
 
 import android.net.Uri
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "entries") // This defines the SQL table name
 data class JournalEntry(
-    val id: String,
+    @PrimaryKey val id: String, // ID is now the Primary Key
     val userId: String,
-    var title: String,
-    var notes: String,
-    var mood: String,
-    var timestamp: Long,
-    var latitude: Double,
-    var longitude: Double,
-    var address: String? = null,
-    var photos: MutableList<EntryPhoto> = mutableListOf(),
-    var audioUri: Uri? = null
+    val title: String,
+    val notes: String,
+    val mood: String,
+    val timestamp: Long,
+    val latitude: Double,
+    val longitude: Double,
+    val address: String?,
+    val photos: MutableList<EntryPhoto>, // Handled by Converters
+    val audioUri: Uri? // Handled by Converters
 )

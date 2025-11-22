@@ -1,11 +1,13 @@
 package com.mobdeve.s18.mco.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope // <--- Added this import
 import com.mobdeve.s18.mco.PinJournalApp
 import com.mobdeve.s18.mco.models.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch // <--- Added this import
 
 class SignUpViewModel : ViewModel() {
 
@@ -42,18 +44,23 @@ class SignUpViewModel : ViewModel() {
 
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
-        val result = authRepository.signUp(username, password)
-        if (result.isSuccess) {
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                isSignUpSuccess = true,
-                user = result.getOrNull()
-            )
-        } else {
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                errorMessage = result.exceptionOrNull()?.message ?: "Sign up failed"
-            )
+        // FIX: Must use viewModelScope.launch because signUp is now a database operation (suspend)
+        viewModelScope.launch {
+            // Note: We are passing empty strings for firstName/lastName as they aren't in the UI form yet
+            val result = authRepository.signUp(username, password)
+
+            if (result.isSuccess) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    isSignUpSuccess = true,
+                    user = result.getOrNull()
+                )
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = result.exceptionOrNull()?.message ?: "Sign up failed"
+                )
+            }
         }
     }
 

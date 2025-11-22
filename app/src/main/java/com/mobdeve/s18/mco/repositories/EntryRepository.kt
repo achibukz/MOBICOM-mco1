@@ -1,60 +1,46 @@
 package com.mobdeve.s18.mco.repositories
 
+import com.mobdeve.s18.mco.database.EntryDao
 import com.mobdeve.s18.mco.models.JournalEntry
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.UUID
 
-class EntryRepository {
-    private val entries = mutableListOf<JournalEntry>()
+// Now takes the DAO as a parameter instead of an empty list
+class EntryRepository(private val entryDao: EntryDao) {
 
-    fun addEntry(entry: JournalEntry): String {
-        val newEntry = entry.copy(id = UUID.randomUUID().toString())
-        entries.add(newEntry)
+    // Marked as suspend because database operations must run in background
+    suspend fun addEntry(entry: JournalEntry): String {
+        val newId = if (entry.id.isEmpty()) UUID.randomUUID().toString() else entry.id
+        val newEntry = entry.copy(id = newId)
+        entryDao.insertEntry(newEntry)
         return newEntry.id
     }
 
-    fun updateEntry(entry: JournalEntry): Boolean {
-        val index = entries.indexOfFirst { it.id == entry.id }
-        return if (index != -1) {
-            entries[index] = entry
-            true
-        } else {
-            false
-        }
+    suspend fun updateEntry(entry: JournalEntry) {
+        entryDao.updateEntry(entry)
     }
 
-    fun deleteEntry(entryId: String): Boolean {
-        return entries.removeAll { it.id == entryId }
+    suspend fun deleteEntry(entryId: String) {
+        entryDao.deleteEntry(entryId)
     }
 
-    fun getEntry(entryId: String): JournalEntry? {
-        return entries.find { it.id == entryId }
+    suspend fun getEntry(entryId: String): JournalEntry? {
+        return entryDao.getEntry(entryId)
     }
 
-    fun getAllEntries(): List<JournalEntry> {
-        return entries.toList()
+    suspend fun getEntriesByUser(userId: String): List<JournalEntry> {
+        return entryDao.getEntriesByUser(userId)
     }
 
-    fun getEntriesByUser(userId: String): List<JournalEntry> {
-        return entries.filter { it.userId == userId }
+    suspend fun getRecentEntries(userId: String, limit: Int = 10): List<JournalEntry> {
+        return entryDao.getRecentEntries(userId, limit)
     }
 
-    fun getEntriesByUserSortedByDate(userId: String): List<JournalEntry> {
-        return entries.filter { it.userId == userId }
-            .sortedByDescending { it.timestamp }
-    }
-
-    fun getRecentEntries(userId: String, limit: Int = 10): List<JournalEntry> {
-        return entries.filter { it.userId == userId }
-            .sortedByDescending { it.timestamp }
-            .take(limit)
-    }
-
-    fun getEntriesForDate(userId: String, dateTimestamp: Long): List<JournalEntry> {
+    suspend fun getEntriesForDate(userId: String, dateTimestamp: Long): List<JournalEntry> {
         val dayStart = (dateTimestamp / (24 * 60 * 60 * 1000)) * (24 * 60 * 60 * 1000)
         val dayEnd = dayStart + (24 * 60 * 60 * 1000) - 1
 
-        return entries.filter { entry ->
-            entry.userId == userId && entry.timestamp in dayStart..dayEnd
-        }.sortedByDescending { it.timestamp }
+        return entryDao.getEntriesForDate(userId, dayStart, dayEnd)
     }
 }

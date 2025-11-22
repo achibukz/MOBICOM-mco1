@@ -33,12 +33,23 @@ class HomeViewModel : ViewModel() {
 
     fun loadRecentEntries() {
         val currentUser = authRepository.getCurrentUser()
+
         if (currentUser != null) {
-            val recentEntries = entryRepository.getRecentEntries(currentUser.id, 10)
-            _uiState.value = _uiState.value.copy(
-                recentEntries = recentEntries,
-                isLoading = false
-            )
+            // OPTIONAL: Set loading to true before fetching
+            _uiState.value = _uiState.value.copy(isLoading = true)
+
+            // FIX: Launch a coroutine to fetch data from the database
+            viewModelScope.launch {
+                val recentEntries = entryRepository.getRecentEntries(currentUser.id, 10)
+
+                _uiState.value = _uiState.value.copy(
+                    recentEntries = recentEntries,
+                    isLoading = false
+                )
+            }
+        } else {
+            // Handle case where user is null (stop loading)
+            _uiState.value = _uiState.value.copy(isLoading = false)
         }
     }
 

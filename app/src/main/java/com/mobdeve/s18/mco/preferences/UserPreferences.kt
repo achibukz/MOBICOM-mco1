@@ -2,38 +2,30 @@ package com.mobdeve.s18.mco.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.mobdeve.s18.mco.models.User
 
 class UserPreferences(context: Context) {
 
     private val prefs: SharedPreferences = context.getSharedPreferences(
-        "user_prefs",
+        "user_session_prefs", // Changed name to avoid conflict with old file
         Context.MODE_PRIVATE
     )
 
-    private val gson = Gson()
-
     companion object {
-        private const val KEY_USERS = "users_list"
+        private const val KEY_CURRENT_USER_ID = "current_user_id"
     }
 
-    // Save all users
-    fun saveUsers(users: Map<String, User>) {
-        val json = gson.toJson(users)
-        prefs.edit().putString(KEY_USERS, json).apply()
+    // Save session (Login)
+    fun saveSession(userId: String) {
+        prefs.edit().putString(KEY_CURRENT_USER_ID, userId).apply()
     }
 
-    // Load all users
-    fun loadUsers(): MutableMap<String, User> {
-        val json = prefs.getString(KEY_USERS, null) ?: return mutableMapOf()
-        val type = object : TypeToken<MutableMap<String, User>>() {}.type
-        return gson.fromJson(json, type) ?: mutableMapOf()
+    // Get current session
+    fun getSessionUserId(): String? {
+        return prefs.getString(KEY_CURRENT_USER_ID, null)
     }
 
-    // Clear all users
-    fun clearUsers() {
-        prefs.edit().remove(KEY_USERS).apply()
+    // Clear session (Logout)
+    fun clearSession() {
+        prefs.edit().remove(KEY_CURRENT_USER_ID).apply()
     }
 }

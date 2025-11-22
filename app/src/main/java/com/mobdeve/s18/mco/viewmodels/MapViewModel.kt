@@ -1,11 +1,13 @@
 package com.mobdeve.s18.mco.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope // <--- IMPORT THIS
 import com.mobdeve.s18.mco.PinJournalApp
 import com.mobdeve.s18.mco.models.JournalEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch // <--- IMPORT THIS
 
 class MapViewModel : ViewModel() {
 
@@ -22,11 +24,18 @@ class MapViewModel : ViewModel() {
     private fun loadEntries() {
         val currentUser = authRepository.getCurrentUser()
         if (currentUser != null) {
-            val entries = entryRepository.getEntriesByUser(currentUser.id)
-            _uiState.value = _uiState.value.copy(
-                entries = entries,
-                isLoading = false
-            )
+
+            // FIX: Launch a coroutine to fetch entries from the database
+            viewModelScope.launch {
+                _uiState.value = _uiState.value.copy(isLoading = true)
+
+                val entries = entryRepository.getEntriesByUser(currentUser.id)
+
+                _uiState.value = _uiState.value.copy(
+                    entries = entries,
+                    isLoading = false
+                )
+            }
         }
     }
 

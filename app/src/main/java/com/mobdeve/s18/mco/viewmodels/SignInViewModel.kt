@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 class SignInViewModel : ViewModel() {
 
     private val authRepository = PinJournalApp.instance.authRepository
-    private val sessionManager = PinJournalApp.instance.sessionManager
+    // Session handling is now done inside AuthRepository, so we don't need sessionManager here explicitly
 
     private val _uiState = MutableStateFlow(SignInUiState())
     val uiState: StateFlow<SignInUiState> = _uiState.asStateFlow()
@@ -28,21 +28,22 @@ class SignInViewModel : ViewModel() {
 
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
-        val result = authRepository.signIn(username, password)
-        if (result.isSuccess) {
-            viewModelScope.launch {
-                sessionManager.saveSession(username)
+        // FIX: Must use viewModelScope.launch because signIn is now a database operation (suspend)
+        viewModelScope.launch {
+            val result = authRepository.signIn(username, password)
+
+            if (result.isSuccess) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     isSignedIn = true,
                     user = result.getOrNull()
                 )
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Invalid username or password"
+                )
             }
-        } else {
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                errorMessage = "Invalid username or password"
-            )
         }
     }
 

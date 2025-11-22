@@ -1,11 +1,13 @@
 package com.mobdeve.s18.mco.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mobdeve.s18.mco.PinJournalApp
 import com.mobdeve.s18.mco.models.JournalEntry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class EntryDetailViewModel : ViewModel() {
 
@@ -15,30 +17,38 @@ class EntryDetailViewModel : ViewModel() {
     val uiState: StateFlow<EntryDetailUiState> = _uiState.asStateFlow()
 
     fun loadEntry(entryId: String) {
-        val entry = entryRepository.getEntry(entryId)
-        if (entry != null) {
-            _uiState.value = _uiState.value.copy(
-                entry = entry,
-                isLoading = false
-            )
-        } else {
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                errorMessage = "Entry not found"
-            )
+        _uiState.value = _uiState.value.copy(isLoading = true)
+
+        // FIX 1: Launch a coroutine to fetch data in background
+        viewModelScope.launch {
+            val entry = entryRepository.getEntry(entryId)
+
+            if (entry != null) {
+                _uiState.value = _uiState.value.copy(
+                    entry = entry,
+                    isLoading = false
+                )
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = "Entry not found"
+                )
+            }
         }
     }
 
-    fun deleteEntry(): Boolean {
+    fun deleteEntry() {
         val entry = _uiState.value.entry
         if (entry != null) {
-            val success = entryRepository.deleteEntry(entry.id)
-            if (success) {
+
+            viewModelScope.launch {
+                // Perform the delete
+                entryRepository.deleteEntry(entry.id)
+
+                // Update the UI to say "We are done"
                 _uiState.value = _uiState.value.copy(isDeleted = true)
             }
-            return success
         }
-        return false
     }
 
     fun clearError() {

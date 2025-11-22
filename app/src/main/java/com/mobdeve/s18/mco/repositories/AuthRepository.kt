@@ -1,75 +1,87 @@
 package com.mobdeve.s18.mco.repositories
 
+import com.mobdeve.s18.mco.database.UserDao
 import com.mobdeve.s18.mco.models.User
 import com.mobdeve.s18.mco.preferences.UserPreferences
 import java.util.UUID
 
-class AuthRepository(private val userPreferences: UserPreferences) {
-    private var users = mutableMapOf<String, User>()
+class AuthRepository(
+    private val userDao: UserDao,
+    private val userPreferences: UserPreferences
+) {
+
     private var currentUser: User? = null
 
-    init {
-        // Load existing users from SharedPreferences
-        users = userPreferences.loadUsers()
-
-        // Add default test account if no users exist
-        if (users.isEmpty()) {
-            val testUser = User(
-                id = UUID.randomUUID().toString(),
-                username = "test",
-                passwordPlain = "123456"
-            )
-            users["test"] = testUser
-            saveUsers() // Save the test user
+    // Check if user is already logged in (Session persistence)
+    suspend fun checkAutoLogin(): User? {
+        val savedId = userPreferences.getSessionUserId()
+        if (savedId != null) {
+            val user = userDao.getUserById(savedId)
+            if (user != null) {
+                currentUser = user
+                return user
+            }
         }
+        return null
     }
 
-    // Persist the users map to SharedPreferences via UserPreferences
-    private fun saveUsers() {
-        userPreferences.saveUsers(users)
-    }
+    // --- THIS IS THE MISSING FUNCTION ---
+    suspend fun signIn(username: String, password: String): Result<User> {
+        // 1. Find user in DB
+        val user = userDao.getUserByUsername(username)
 
-    fun signUp(username: String, password: String): Result<User> {
-        if (users.containsKey(username)) {
-            return Result.failure(Exception("Username already exists"))
-        }
-
-        val user = User(
-            id = UUID.randomUUID().toString(),
-            username = username,
-            passwordPlain = password
-        )
-
-        users[username] = user
-        saveUsers() // persist new user
-        return Result.success(user)
-    }
-
-    fun signIn(username: String, password: String): Result<User> {
-        val user = users[username]
+        // 2. Verify password
         return if (user != null && user.passwordPlain == password) {
             currentUser = user
+            userPreferences.saveSession(user.id)
             Result.success(user)
         } else {
             Result.failure(Exception("Invalid credentials"))
         }
     }
 
-    fun getCurrentUser(): User? = currentUser
-
-    fun updateUser(updatedUser: User): Result<User> {
-        val oldUsername = currentUser?.username
-        if (oldUsername != null && users.containsKey(oldUsername)) {
-            users.remove(oldUsername)
-            users[updatedUser.username] = updatedUser
-            currentUser = updatedUser
-            saveUsers() // persist changes
-            return Result.success(updatedUser)
+    suspend fun signUp(username: String, password: String, firstName: String = "", lastName: String = ""): Result<User> {
+        // 1. Check if username exists
+        val existing = userDao.getUserByUsername(username)
+        if (existing != null) {
+            return Result.failure(Exception("Username already exists"))
         }
-        return Result.failure(Exception("User not found"))
+
+        // 2. Create new User object
+        val newUser = User(
+            id = UUID.randomUUID().toString(),
+            username = username,
+            passwordPlain = password,
+            firstName = firstName,
+            lastName = lastName
+        )
+
+        // 3. Save to DB
+        try {
+            userDao.insertUser(newUser)
+            // Auto-login after signup
+            currentUser = newUser
+            userPreferences.saveSession(newUser.id)
+            return Result.success(newUser)
+        } catch (e: Exception) {
+            return Result.failure(e)
+        }
+    }
+
+    suspend fun updateUser(user: User): Result<User> {
+        return try {
+            userDao.updateUser(user)
+            currentUser = user // Update local cache
+            Result.success(user)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
     fun signOut() {
         currentUser = null
+        userPreferences.clearSession()
     }
+
+    fun getCurrentUser(): User? = currentUser
 }

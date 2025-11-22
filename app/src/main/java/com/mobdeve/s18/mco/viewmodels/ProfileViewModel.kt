@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 class ProfileViewModel : ViewModel() {
 
     private val authRepository = PinJournalApp.instance.authRepository
-    private val sessionManager = PinJournalApp.instance.sessionManager
+    // Removed sessionManager: AuthRepository handles session consistency now
 
     private val _uiState = MutableStateFlow(ProfileUiState())
     val uiState: StateFlow<ProfileUiState> = _uiState.asStateFlow()
@@ -33,7 +33,6 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    // Unified update method: can update username/password and/or profile fields
     fun updateProfile(
         username: String? = null,
         password: String? = null,
@@ -49,16 +48,13 @@ class ProfileViewModel : ViewModel() {
             return
         }
 
-        // Check auth fields independently so user can change username OR password (not necessarily both)
+        // Validation Logic (Kept same as your code)
         val updatingAuth = username != null || password != null
         if (updatingAuth) {
-            if (username != null) {
-                if (username.isBlank()) {
-                    _uiState.value = _uiState.value.copy(errorMessage = "Please provide a valid username")
-                    return
-                }
+            if (username != null && username.isBlank()) {
+                _uiState.value = _uiState.value.copy(errorMessage = "Please provide a valid username")
+                return
             }
-
             if (password != null) {
                 if (password.isBlank()) {
                     _uiState.value = _uiState.value.copy(errorMessage = "Please provide a valid password")
@@ -71,7 +67,6 @@ class ProfileViewModel : ViewModel() {
             }
         }
 
-        // If updating profile details, require all profile fields provided (matches previous behaviour)
         val updatingProfile = firstName != null || lastName != null || email != null || mobile != null
         if (updatingProfile) {
             if (firstName.isNullOrBlank() || lastName.isNullOrBlank() || email.isNullOrBlank() || mobile.isNullOrBlank()) {
@@ -86,7 +81,6 @@ class ProfileViewModel : ViewModel() {
 
         _uiState.value = _uiState.value.copy(isLoading = true, errorMessage = null)
 
-        // Build updated user by copying existing values and applying provided ones
         val updatedUser = currentUser.copy(
             username = username ?: currentUser.username,
             passwordPlain = password ?: currentUser.passwordPlain,
@@ -97,33 +91,30 @@ class ProfileViewModel : ViewModel() {
             profileImageUri = profileImageUri ?: currentUser.profileImageUri
         )
 
-        val result = authRepository.updateUser(updatedUser)
+        // FIX: Move repository call inside a coroutine
+        viewModelScope.launch {
+            val result = authRepository.updateUser(updatedUser)
 
-        if (result.isSuccess) {
-            viewModelScope.launch {
-                // If username changed, update session
-                if (updatingAuth && username != null) {
-                    sessionManager.saveSession(username)
-                }
+            if (result.isSuccess) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
                     user = updatedUser,
                     username = updatedUser.username,
                     isUpdateSuccess = true
                 )
+            } else {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    errorMessage = result.exceptionOrNull()?.message ?: "Update failed"
+                )
             }
-        } else {
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                errorMessage = result.exceptionOrNull()?.message ?: "Update failed"
-            )
         }
     }
 
     fun signOut() {
+        // FIX: Move to coroutine just in case, though signOut is usually synchronous
         viewModelScope.launch {
             authRepository.signOut()
-            sessionManager.clearSession()
             _uiState.value = _uiState.value.copy(isSignedOut = true)
         }
     }

@@ -1,6 +1,5 @@
 package com.mobdeve.s18.mco.adapters
 
-import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -33,7 +32,7 @@ class PhotoGridAdapter(
 
         fun bind(photo: EntryPhoto) {
             Glide.with(binding.ivPhoto.context)
-                .load(photo.uri)
+                .load(photo.uriString) // FIX: Use uriString (Glide handles this automatically)
                 .centerCrop()
                 .into(binding.ivPhoto)
 
@@ -45,7 +44,8 @@ class PhotoGridAdapter(
 
     private class PhotoDiffCallback : DiffUtil.ItemCallback<EntryPhoto>() {
         override fun areItemsTheSame(oldItem: EntryPhoto, newItem: EntryPhoto): Boolean {
-            return oldItem.uri == newItem.uri
+            // FIX: Compare the string properties
+            return oldItem.uriString == newItem.uriString
         }
 
         override fun areContentsTheSame(oldItem: EntryPhoto, newItem: EntryPhoto): Boolean {

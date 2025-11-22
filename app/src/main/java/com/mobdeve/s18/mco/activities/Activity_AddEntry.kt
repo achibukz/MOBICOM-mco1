@@ -223,14 +223,38 @@ class Activity_AddEntry : AppCompatActivity() {
     }
 
     private fun setupMediaPickers() {
+        // 1. IMAGE PICKER
         imagePickerLauncher = SafUtils.createImagePickerLauncher(this) { uris ->
             if (uris.isNotEmpty()) {
+                // --- NEW CODE START: Take Persistable Permissions ---
+                val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
+
+                for (uri in uris) {
+                    try {
+                        contentResolver.takePersistableUriPermission(uri, takeFlags)
+                    } catch (e: Exception) {
+                        // Some providers might not support this, catch to prevent crash
+                        e.printStackTrace()
+                    }
+                }
+                // --- NEW CODE END ---
+
                 viewModel.addPhotos(uris)
             }
         }
 
+        // 2. AUDIO PICKER
         audioPickerLauncher = SafUtils.createAudioPickerLauncher(this) { uri ->
             uri?.let {
+                // --- NEW CODE START: Take Permission for Audio too ---
+                try {
+                    val takeFlags: Int = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    contentResolver.takePersistableUriPermission(it, takeFlags)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+                // --- NEW CODE END ---
+
                 val filename = getFileNameFromUri(it)
                 viewModel.setAudioFile(it, filename)
                 // Show feedback that audio was added

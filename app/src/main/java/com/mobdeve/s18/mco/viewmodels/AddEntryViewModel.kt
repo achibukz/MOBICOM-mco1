@@ -2,6 +2,7 @@ package com.mobdeve.s18.mco.viewmodels
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mobdeve.s18.mco.PinJournalApp
 import com.mobdeve.s18.mco.models.EntryPhoto
 import com.mobdeve.s18.mco.models.JournalEntry
@@ -9,6 +10,7 @@ import com.mobdeve.s18.mco.utils.DateUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 class AddEntryViewModel : ViewModel() {
 
@@ -43,10 +45,13 @@ class AddEntryViewModel : ViewModel() {
         _uiState.value = _uiState.value.copy(timestamp = timestamp)
     }
 
+    // --- FIX HERE ---
     fun addPhotos(uris: List<Uri>) {
         val currentPhotos = _uiState.value.photos.toMutableList()
         val newPhotos = uris.mapIndexed { index, uri ->
-            EntryPhoto(uri, currentPhotos.size + index)
+            // CHANGED: Convert uri to String.
+            // Make sure your EntryPhoto class expects (String, Int)
+            EntryPhoto(uri.toString(), currentPhotos.size + index)
         }
         currentPhotos.addAll(newPhotos)
         _uiState.value = _uiState.value.copy(photos = currentPhotos)
@@ -83,13 +88,14 @@ class AddEntryViewModel : ViewModel() {
             return false
         }
 
+        // Optional: Allow saving without location, or keep this check if mandatory
         if (state.latitude == 0.0 && state.longitude == 0.0) {
             _uiState.value = state.copy(errorMessage = "Location is required")
             return false
         }
 
         val entry = JournalEntry(
-            id = "", // Will be set by repository
+            id = "",
             userId = currentUser.id,
             title = state.title,
             notes = state.notes,
@@ -103,8 +109,15 @@ class AddEntryViewModel : ViewModel() {
             audioUri = state.audioUri
         )
 
-        entryRepository.addEntry(entry)
-        _uiState.value = state.copy(isSaved = true)
+        viewModelScope.launch {
+            try {
+                entryRepository.addEntry(entry)
+                _uiState.value = _uiState.value.copy(isSaved = true)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(errorMessage = "Failed to save: ${e.message}")
+            }
+        }
+
         return true
     }
 
