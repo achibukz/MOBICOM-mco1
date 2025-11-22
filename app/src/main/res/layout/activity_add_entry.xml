@@ -58,6 +58,22 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="@dimen/spacing_sm" />
 
+        <!-- Entry Date picker -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_md"
+            android:text="@string/entry_date"
+            android:textSize="@dimen/text_size_body"
+            android:textColor="@color/text_primary" />
+
+        <Button
+            android:id="@+id/btnEntryDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/spacing_sm"
+            android:text="Select date" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

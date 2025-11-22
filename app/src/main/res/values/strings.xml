@@ -27,6 +27,8 @@
     <string name="notes">Notes</string>
     <string name="mood">Mood</string>
     <string name="date_time">Date &amp; Time</string>
+    <string name="entry_date">Entry Date</string>
+    <string name="select_date">Select date</string>
     <string name="location">Location</string>
     <string name="use_current_location">Use Current Location</string>
     <string name="add_photos">Add Photos</string>
@@ -80,4 +82,3 @@
     <string name="cd_map_marker">Map marker</string>
     <string name="cd_audio_file">Audio file</string>
 </resources>
-

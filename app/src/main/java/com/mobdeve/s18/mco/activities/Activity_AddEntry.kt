@@ -2,6 +2,7 @@ package com.mobdeve.s18.mco.activities
 
 import android.Manifest
 import android.app.Activity
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -31,6 +32,7 @@ import com.mobdeve.s18.mco.adapters.PhotoGridAdapter
 import com.mobdeve.s18.mco.utils.LocationSearchUtils
 import com.mobdeve.s18.mco.utils.LocationUtils
 import com.mobdeve.s18.mco.utils.SafUtils
+import com.mobdeve.s18.mco.utils.DateUtils
 import com.mobdeve.s18.mco.viewmodels.AddEntryViewModel
 import kotlinx.coroutines.launch
 import org.osmdroid.config.Configuration
@@ -39,6 +41,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 import java.io.File
+import java.util.Calendar
 
 class Activity_AddEntry : AppCompatActivity() {
 
@@ -73,6 +76,7 @@ class Activity_AddEntry : AppCompatActivity() {
         setupMediaPickers()
         setupLocationSearchLauncher()
         setupUI()
+        initEntryDateButton()
         setupBottomNavigation()
         observeViewModel()
 
@@ -89,6 +93,28 @@ class Activity_AddEntry : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, moods)
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         findViewById<Spinner>(R.id.spinnerMood).adapter = adapter
+    }
+
+    // Helper to format and set the entry date button text
+    private fun initEntryDateButton() {
+        val btnDate = findViewById<Button>(R.id.btnEntryDate)
+        // initialize with today's date
+        btnDate.text = DateUtils.formatDate(DateUtils.getCurrentTimestamp())
+
+        btnDate.setOnClickListener {
+            val now = Calendar.getInstance()
+            val dialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
+                val cal = Calendar.getInstance()
+                cal.set(year, month, dayOfMonth, 0, 0, 0)
+                cal.set(Calendar.MILLISECOND, 0)
+                val ts = cal.timeInMillis
+                // update button text and viewmodel
+                btnDate.text = DateUtils.formatDate(ts)
+                viewModel.updateTimestamp(ts)
+            }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH))
+
+            dialog.show()
+        }
     }
 
     private fun setupMap() {

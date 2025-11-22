@@ -38,6 +38,11 @@ class AddEntryViewModel : ViewModel() {
         )
     }
 
+    // New: allow updating the entry date/timestamp
+    fun updateTimestamp(timestamp: Long) {
+        _uiState.value = _uiState.value.copy(timestamp = timestamp)
+    }
+
     fun addPhotos(uris: List<Uri>) {
         val currentPhotos = _uiState.value.photos.toMutableList()
         val newPhotos = uris.mapIndexed { index, uri ->
@@ -89,7 +94,8 @@ class AddEntryViewModel : ViewModel() {
             title = state.title,
             notes = state.notes,
             mood = state.mood,
-            timestamp = DateUtils.getCurrentTimestamp(),
+            // Use the user-selected timestamp (state.timestamp)
+            timestamp = state.timestamp,
             latitude = state.latitude,
             longitude = state.longitude,
             address = state.address,
@@ -117,6 +123,8 @@ data class AddEntryUiState(
     val photos: List<EntryPhoto> = emptyList(),
     val audioUri: Uri? = null,
     val audioFilename: String? = null,
+    // New: timestamp of the entry (defaults to now)
+    val timestamp: Long = DateUtils.getCurrentTimestamp(),
     val isLoading: Boolean = false,
     val isSaved: Boolean = false,
     val errorMessage: String? = null
