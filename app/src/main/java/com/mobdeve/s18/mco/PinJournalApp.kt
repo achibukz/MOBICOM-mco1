@@ -16,13 +16,13 @@ class PinJournalApp : Application() {
 
     // Dependencies
     val userPreferences by lazy { UserPreferences(this) }
+    val sessionManager by lazy { SessionManager(this) }
     val authRepository by lazy {
-        AuthRepository(database.userDao(), userPreferences)
+        AuthRepository(database.userDao(), userPreferences, sessionManager)
     }
     // Pass the DAO to the Repository
     val entryRepository by lazy { EntryRepository(database.entryDao()) }
 
-    val sessionManager by lazy { SessionManager(this) }
 
     override fun onCreate() {
         super.onCreate()

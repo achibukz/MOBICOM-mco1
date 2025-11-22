@@ -51,6 +51,29 @@ class EntryDetailViewModel : ViewModel() {
         }
     }
 
+    fun removePhoto(photoToRemove: com.mobdeve.s18.mco.models.EntryPhoto) {
+        val entry = _uiState.value.entry
+        if (entry != null) {
+            viewModelScope.launch {
+                // Remove the photo from the list
+                val updatedPhotos = entry.photos.toMutableList()
+                updatedPhotos.remove(photoToRemove)
+
+                // Reindex remaining photos
+                updatedPhotos.forEachIndexed { index, photo ->
+                    updatedPhotos[index] = photo.copy(orderIndex = index)
+                }
+
+                // Update the entry with the new photo list
+                val updatedEntry = entry.copy(photos = updatedPhotos)
+                entryRepository.updateEntry(updatedEntry)
+
+                // Update the UI state
+                _uiState.value = _uiState.value.copy(entry = updatedEntry)
+            }
+        }
+    }
+
     fun clearError() {
         _uiState.value = _uiState.value.copy(errorMessage = null)
     }

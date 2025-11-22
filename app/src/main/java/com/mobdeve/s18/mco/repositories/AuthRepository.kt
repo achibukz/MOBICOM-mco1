@@ -3,11 +3,13 @@ package com.mobdeve.s18.mco.repositories
 import com.mobdeve.s18.mco.database.UserDao
 import com.mobdeve.s18.mco.models.User
 import com.mobdeve.s18.mco.preferences.UserPreferences
+import com.mobdeve.s18.mco.session.SessionManager
 import java.util.UUID
 
 class AuthRepository(
     private val userDao: UserDao,
-    private val userPreferences: UserPreferences
+    private val userPreferences: UserPreferences,
+    private val sessionManager: SessionManager
 ) {
 
     private var currentUser: User? = null
@@ -19,13 +21,14 @@ class AuthRepository(
             val user = userDao.getUserById(savedId)
             if (user != null) {
                 currentUser = user
+                // Also update SessionManager with username
+                sessionManager.saveSession(user.username)
                 return user
             }
         }
         return null
     }
 
-    // --- THIS IS THE MISSING FUNCTION ---
     suspend fun signIn(username: String, password: String): Result<User> {
         // 1. Find user in DB
         val user = userDao.getUserByUsername(username)
@@ -34,6 +37,8 @@ class AuthRepository(
         return if (user != null && user.passwordPlain == password) {
             currentUser = user
             userPreferences.saveSession(user.id)
+            // Save username to SessionManager for display purposes
+            sessionManager.saveSession(user.username)
             Result.success(user)
         } else {
             Result.failure(Exception("Invalid credentials"))
@@ -62,6 +67,8 @@ class AuthRepository(
             // Auto-login after signup
             currentUser = newUser
             userPreferences.saveSession(newUser.id)
+            // Save username to SessionManager
+            sessionManager.saveSession(newUser.username)
             return Result.success(newUser)
         } catch (e: Exception) {
             return Result.failure(e)
@@ -78,9 +85,10 @@ class AuthRepository(
         }
     }
 
-    fun signOut() {
+    suspend fun signOut() {
         currentUser = null
         userPreferences.clearSession()
+        sessionManager.clearSession()
     }
 
     fun getCurrentUser(): User? = currentUser

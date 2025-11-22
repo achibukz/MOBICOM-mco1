@@ -61,6 +61,12 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
 
+        <!-- Edit Entry Activity -->
+        <activity
+            android:name=".activities.Activity_EditEntry"
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
+
         <!-- Map Activity -->
         <activity
             android:name=".activities.Activity_Map"

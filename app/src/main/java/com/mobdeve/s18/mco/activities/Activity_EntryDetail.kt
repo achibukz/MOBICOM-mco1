@@ -1,5 +1,7 @@
 package com.mobdeve.s18.mco.activities
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -59,6 +61,8 @@ class Activity_EntryDetail : AppCompatActivity() {
 
     private fun setupToolbar() {
         title = "Entry Details"
+        // Disable the back button
+        supportActionBar?.setDisplayHomeAsUpEnabled(false)
     }
 
     private fun setupMap() {
@@ -68,7 +72,11 @@ class Activity_EntryDetail : AppCompatActivity() {
     }
 
     private fun setupPhotoGrid() {
-        photoAdapter = PhotoGridAdapter { /* No remove functionality in detail view */ }
+        photoAdapter = PhotoGridAdapter { photo ->
+            // Enable photo deletion in detail view
+            viewModel.removePhoto(photo)
+            Toast.makeText(this, "Photo removed", Toast.LENGTH_SHORT).show()
+        }
 
         findViewById<RecyclerView>(R.id.rvPhotos).apply {
             adapter = photoAdapter
@@ -78,7 +86,9 @@ class Activity_EntryDetail : AppCompatActivity() {
 
     private fun setupUI() {
         findViewById<MaterialButton>(R.id.btnEdit).setOnClickListener {
-            Toast.makeText(this, "Edit functionality would be implemented here", Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, Activity_EditEntry::class.java)
+            intent.putExtra(Activity_EditEntry.EXTRA_ENTRY_ID, entryId)
+            startActivityForResult(intent, EDIT_ENTRY_REQUEST_CODE)
         }
 
         // The Listener simply triggers the ViewModel command
@@ -147,11 +157,15 @@ class Activity_EntryDetail : AppCompatActivity() {
                     mapView.overlays.add(marker)
                     mapView.invalidate()
 
-                    // Photos
+                    // Photos - Always update the photo grid
+                    photoAdapter.submitList(entry.photos.toList())
+
                     if (entry.photos.isNotEmpty()) {
                         findViewById<TextView>(R.id.tvPhotosLabel).visibility = View.VISIBLE
                         findViewById<RecyclerView>(R.id.rvPhotos).visibility = View.VISIBLE
-                        photoAdapter.submitList(entry.photos)
+                    } else {
+                        findViewById<TextView>(R.id.tvPhotosLabel).visibility = View.GONE
+                        findViewById<RecyclerView>(R.id.rvPhotos).visibility = View.GONE
                     }
 
                     // Audio
@@ -173,5 +187,17 @@ class Activity_EntryDetail : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         AudioPlayerUtils.stopAudio()
+    }
+
+    companion object {
+        private const val EDIT_ENTRY_REQUEST_CODE = 1001
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == EDIT_ENTRY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            // Reload the entry after editing
+            entryId?.let { viewModel.loadEntry(it) }
+        }
     }
 }

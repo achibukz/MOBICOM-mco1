@@ -186,7 +186,7 @@ class Activity_AddEntry : AppCompatActivity() {
 
                 override fun onMarkerDragEnd(marker: Marker?) {
                     marker?.position?.let { newPosition ->
-                        viewModel.updateLocation(newPosition.latitude, newPosition.longitude)
+                        viewModel.updateLocation(newPosition.latitude, newPosition.longitude, "Custom Location")
                         Toast.makeText(this@Activity_AddEntry,
                             "Location updated to: ${String.format("%.4f", newPosition.latitude)}, ${String.format("%.4f", newPosition.longitude)}",
                             Toast.LENGTH_SHORT).show()
