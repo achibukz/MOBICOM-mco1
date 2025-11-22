@@ -9,7 +9,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.provider.OpenableColumns
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageButton
@@ -18,7 +17,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -29,7 +27,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.textfield.TextInputEditText
 import com.mobdeve.s18.mco.R
 import com.mobdeve.s18.mco.adapters.PhotoGridAdapter
-import com.mobdeve.s18.mco.utils.LocationSearchUtils
 import com.mobdeve.s18.mco.utils.LocationUtils
 import com.mobdeve.s18.mco.utils.SafUtils
 import com.mobdeve.s18.mco.utils.DateUtils
@@ -51,13 +48,6 @@ class Activity_AddEntry : AppCompatActivity() {
     private lateinit var audioPickerLauncher: ActivityResultLauncher<Intent>
     private lateinit var locationSearchLauncher: ActivityResultLauncher<Intent>
     private var locationMarker: Marker? = null
-
-    data class LocationResult(
-        val name: String,
-        val latitude: Double,
-        val longitude: Double,
-        val displayName: String
-    )
 
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1001
@@ -90,8 +80,9 @@ class Activity_AddEntry : AppCompatActivity() {
 
     private fun setupSpinner() {
         val moods = arrayOf("Happy", "Sad", "Excited", "Calm", "Anxious", "Grateful", "Nostalgic", "Adventurous")
-        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, moods)
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        // Use themed item layouts so colors follow the app theme
+        val adapter = ArrayAdapter(this, R.layout.spinner_item, moods)
+        adapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
         findViewById<Spinner>(R.id.spinnerMood).adapter = adapter
     }
 
@@ -103,7 +94,9 @@ class Activity_AddEntry : AppCompatActivity() {
 
         btnDate.setOnClickListener {
             val now = Calendar.getInstance()
-            val dialog = DatePickerDialog(this, { _, year, month, dayOfMonth ->
+            // Use a themed context so the DatePicker matches the app theme (dark/light)
+            val themedContext = android.view.ContextThemeWrapper(this, R.style.Theme_PinJournal)
+            val dialog = DatePickerDialog(themedContext, { _, year, month, dayOfMonth ->
                 val cal = Calendar.getInstance()
                 cal.set(year, month, dayOfMonth, 0, 0, 0)
                 cal.set(Calendar.MILLISECOND, 0)
@@ -241,7 +234,7 @@ class Activity_AddEntry : AppCompatActivity() {
                 val filename = getFileNameFromUri(it)
                 viewModel.setAudioFile(it, filename)
                 // Show feedback that audio was added
-                Toast.makeText(this, "Audio file added: $filename", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.audio_added_fmt, filename), Toast.LENGTH_SHORT).show()
                 updateAudioButtonState(true, filename)
             }
         }
@@ -353,17 +346,17 @@ class Activity_AddEntry : AppCompatActivity() {
                 }
 
             tvAudioFile.text = cleanFileName
-            btnAddMusic.text = "Change Music"
+            btnAddMusic.text = getString(R.string.change_music)
 
             // Set up remove audio button
             btnRemoveAudio.setOnClickListener {
                 viewModel.setAudioFile(null, null)
-                Toast.makeText(this, "Audio file removed", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.audio_removed), Toast.LENGTH_SHORT).show()
             }
         } else {
             // Hide the audio layout
             layoutAudio.visibility = View.GONE
-            btnAddMusic.text = "Add Music"
+            btnAddMusic.text = getString(R.string.add_music)
         }
     }
 

@@ -29,6 +29,7 @@
     <string name="date_time">Date &amp; Time</string>
     <string name="entry_date">Entry Date</string>
     <string name="select_date">Select date</string>
+    <string name="search_for_place">Search for a place</string>
     <string name="location">Location</string>
     <string name="use_current_location">Use Current Location</string>
     <string name="add_photos">Add Photos</string>
@@ -81,4 +82,11 @@
     <string name="cd_remove_photo">Remove photo</string>
     <string name="cd_map_marker">Map marker</string>
     <string name="cd_audio_file">Audio file</string>
+
+    <!-- Audio -->
+    <string name="audio_file_added">🎵 Audio File Added</string>
+    <string name="audio_file">Audio file</string>
+    <string name="change_music">Change Music</string>
+    <string name="audio_added_fmt">Audio file added: %1$s</string>
+    <string name="audio_removed">Audio file removed</string>
 </resources>
